@@ -1,0 +1,30 @@
+<h3> To Do´s List</h3>
+
+<div>
+  <input class="form-control" type="text" placeholder="Search" aria-label="Search">
+</div>
+
+<div>
+  <ul>
+    <li *ngFor="let element of ToDoList">
+      <label><input type="checkbox" value="false">{{element}}</label>
+    </li>
+  </ul>
+</div>
+
+<h3>Done List</h3>
+
+<div>
+  <ul>
+    <li *ngFor="let element of DoneList">
+      <label><input type="checkbox" value="true">{{element}}</label>
+    </li>
+  </ul>
+</div>
+
+<br/><br/>
+
+<button (click)="LogOut()"  >Log Out</button>
+
+
+
