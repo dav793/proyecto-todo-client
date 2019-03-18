@@ -14,8 +14,8 @@ import { ToDoListComponent } from './ToDo/to-do-list/to-do-list.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]
