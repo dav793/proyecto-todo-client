@@ -4,23 +4,51 @@
   <input class="form-control" type="text" placeholder="Search" aria-label="Search">
 </div>
 
-<div>
+<!-- <div>
   <ul>
     <li *ngFor="let element of ToDoList">
       <label><input type="checkbox" value="false">{{element}}</label>
     </li>
   </ul>
+</div> -->
+<div *ngFor="let element of toDoList.controls; let i = index">
+
+  <h4>#{{i}}</h4>
+
+  <div formArrayName="toDos">
+    <div [formGroupName]="i">
+      <label><input type="checkbox" value="false">{{element.body}}</label>
+    </div>
+  </div>
+
 </div>
+
+
+
 
 <h3>Done List</h3>
 
-<div>
+<!-- <div>
   <ul>
     <li *ngFor="let element of DoneList">
       <s><label><input type="checkbox" value="true">{{element}}</label></s>
     </li>
   </ul>
+</div> -->
+
+<div *ngFor="let element of doneList.controls; let i = index">
+
+  <h4>#{{i}}</h4>
+
+  <div formArrayName="doneArray">
+    <div [formGroupName]="i">
+      <s><label><input type="checkbox" value="true">{{element.body}}</label></s>
+    </div>
+  </div>
+
 </div>
+
+
 
 <br/><br/>
 

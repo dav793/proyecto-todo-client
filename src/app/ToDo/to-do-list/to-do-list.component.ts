@@ -11,14 +11,10 @@ import { ToDo } from '../to-do.model';
   styleUrls: ['./to-do-list.component.css']
 })
 export class ToDoListComponent implements OnInit {
-  form: FormGroup;
-  ToDoList = [
-    'Bañar al perro',
-    'Cocinar',
-    'Estudiar'
-  ];
-
-  DoneList = ['ver Pelis'];
+  formToDo: FormGroup;
+  formDoneList: FormGroup;
+  toDoList = [];
+  doneList = [];
 
   constructor(private formBuilder: FormBuilder, private todoService: ToDoService) { }
 
@@ -48,9 +44,9 @@ export class ToDoListComponent implements OnInit {
   setToDos(toDos: ToDo[]) {
     const toDosGroups = toDos.map((toDo: ToDo) => {
       return this.formBuilder.group({
-        body:     [ toDo.body, [] ],
-        done:     [ toDo.done, [] ],
-        userId:   [ toDo.userId, [] ]
+        body: [toDo.body, []],
+        done: [toDo.done, []],
+        userId: [toDo.userId, []]
       });
     });
     return toDosGroups;
@@ -67,14 +63,55 @@ export class ToDoListComponent implements OnInit {
   setDoneList(doneList: ToDo[]) {
     const toDosGroups = doneList.map((toDo: ToDo) => {
       return this.formBuilder.group({
-        body:     [ toDo.body, [] ],
-        done:     [ toDo.done, [] ],
-        userId:   [ toDo.userId, [] ]
+        body: [toDo.body, []],
+        done: [toDo.done, []],
+        userId: [toDo.userId, []]
       });
     });
     return toDosGroups;
   }
 
+  addToDos() {
+    const toDo = new ToDo({});
+    this.toDoList.push(this.formBuilder.group({
+      body: [toDo.body, []],
+      done: [toDo.done, []],
+      userId: [toDo.userId, []]
+    }));
+    this.formToDo.markAsDirty();
+  }
+
+  removeTodo(index: number) {
+    const toDosCopy: ToDo[] = Object.assign([], this.formToDo.value.toDoList);
+    toDosCopy.splice(index, 1);
+
+    const toDosGroups = this.setToDos(toDosCopy);
+    const toDosFormArray = this.formBuilder.array(toDosGroups);
+
+    this.formToDo.setControl('toDos', toDosFormArray);
+    this.formToDo.markAsDirty();
+  }
+
+  addToDoneList() {
+    const element = new ToDo({});
+    this.doneList.push(this.formBuilder.group({
+      body: [element.body, []],
+      done: [element.done, []],
+      userId: [element.userId, []]
+    }));
+    this.formDoneList.markAsDirty();
+  }
+
+  removeFromDoneList(index: number) {
+    const doneListCopy: ToDo[] = Object.assign([], this.formDoneList.value.doneList);
+    doneListCopy.splice(index, 1);
+
+    const doneListGroups = this.setToDos(doneListCopy);
+    const doneListFormArray = this.formBuilder.array(doneListGroups);
+
+    this.formDoneList.setControl('toDos', doneListFormArray);
+    this.formDoneList.markAsDirty();
+  }
 
 }
 
