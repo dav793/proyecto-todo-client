@@ -1,58 +1,64 @@
 <h3> To Do´s List</h3>
 
-<div>
-  <input class="form-control" type="text" placeholder="Search" aria-label="Search">
-</div>
+<form [formGroup]="formToDo">
 
-<!-- <div>
-  <ul>
-    <li *ngFor="let element of ToDoList">
-      <label><input type="checkbox" value="false">{{element}}</label>
-    </li>
-  </ul>
-</div> -->
-<div *ngFor="let element of toDoList.controls; let i = index">
-
-  <h4>#{{i}}</h4>
-
-  <div formArrayName="toDos">
-    <div [formGroupName]="i">
-      <label><input type="checkbox" value="false">{{element.body}}</label>
-    </div>
+  <div>
+    <input class="form-control" type="text" placeholder="Search" aria-label="Search">
   </div>
-
-</div>
-
-
-
-
-<h3>Done List</h3>
-
-<!-- <div>
-  <ul>
-    <li *ngFor="let element of DoneList">
-      <s><label><input type="checkbox" value="true">{{element}}</label></s>
-    </li>
-  </ul>
-</div> -->
-
-<div *ngFor="let element of doneList.controls; let i = index">
-
-  <h4>#{{i}}</h4>
-
-  <div formArrayName="doneArray">
-    <div [formGroupName]="i">
-      <s><label><input type="checkbox" value="true">{{element.body}}</label></s>
-    </div>
+  
+  <!-- <div>
+    <ul>
+      <li *ngFor="let element of ToDoList">
+        <label><input type="checkbox" value="false">{{element}}</label>
+      </li>
+    </ul>
+  </div> -->
+  
+  <div *ngIf="formToDoArray.controls">
+      <div *ngFor="let element of formToDoArray.controls; let i = index">
+  
+          <h4>{{i}}</h4>
+      
+          <div formArrayName="toDoListArray">
+            <div [formGroupName]="i">
+              <label><input type="checkbox" value="false">{{element.body}}</label>
+            </div>
+          </div>
+        
+        </div>  
   </div>
-
-</div>
-
-
+  
+</form>
 
 <br/><br/>
 
+<h3> Done´s List</h3>
+<form [formGroup]="formToDo">
+  
+  <!-- <div>
+    <ul>
+      <li *ngFor="let element of DoneList">
+        <s><label><input type="checkbox" value="true">{{element}}</label></s>
+      </li>
+    </ul>
+  </div> -->
+  
+
+  <div *ngIf="formDoneListArray.controls">
+      <div *ngFor="let element of formDoneListArray.controls; let i = index">
+  
+          <h4>{{i}}</h4>
+        
+          <div formArrayName="doneListArray">
+            <div [formGroupName]="i">
+              <s><label><input type="checkbox" value="true">{{element.body}}</label></s>
+            </div>
+          </div>
+        
+      </div>
+  </div>
+
+  
+</form>
+
 <button (click)="LogOut()"  >Log Out</button>
-
-
-
