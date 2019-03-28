@@ -20,13 +20,17 @@ export class ToDoListComponent implements OnInit {
   todo2 = new ToDo({ body: 'lavar', done: true, userId: '2' });
   todo3 = new ToDo({ body: 'cocinar', done: false, userId: '3' });
 
-  toDoList = [this.todo1, this.todo3];
-  doneList = [this.todo2];
+  toDoList = [];
+  doneList = [];
 
   constructor(private formBuilder: FormBuilder, private todoService: ToDoService) { }
 
   ngOnInit() {
+    this.toDoList = [this.todo1, this.todo3];
+    this.doneList = [this.todo2];
+
     this.formToDo = this.createFormWithBuilderForToDos(this.toDoList);
+    console.log(this.formToDoArray);
     this.formDoneList = this.createFormWithBuilderForDoneList(this.doneList);
   }
 
@@ -82,7 +86,7 @@ export class ToDoListComponent implements OnInit {
     this.formToDo.markAsDirty();
   }
 
-  // -----------------------------DoneList
+  // -----------------------------DoneList--------------------------------------------------------
 
   createFormWithBuilderForDoneList(model: ToDo[]): FormGroup {
     const doneGroups = this.setDoneList(model);
