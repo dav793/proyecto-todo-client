@@ -1,54 +1,34 @@
 <h3> To Do´s List</h3>
 
-
 <div *ngIf="formToDoArray">
   <form [formGroup]="formToDo">
-
     <div>
       <input class="form-control" type="text" placeholder="Search" aria-label="Search">
     </div>
-
-
     <div *ngFor="let element of formToDoArray.controls; let i = index">
-
-      <h4>{{i}}</h4>
-
-      <div formArrayName="toDoListArray">
+      <div formArrayName="toDos">
         <div [formGroupName]="i">
-          <label><input type="checkbox" value="false">{{element.body}}</label>
+          <label><input type="checkbox" value="false">{{element.value.body}}</label>
         </div>
       </div>
-
     </div>
-
   </form>
-
 </div>
 
 <br /><br />
 
-
 <h3> Done´s List</h3>
 
 <div *ngIf="formDoneListArray">
-
   <form [formGroup]="formDoneList">
-
-
     <div *ngFor="let element of formDoneListArray.controls; let i = index">
-
-      <h4>{{i}}</h4>
-
-      <div formArrayName="doneListArray">
+      <div formArrayName="doneArray">
         <div [formGroupName]="i">
-          <s><label><input type="checkbox" value="true">{{element.body}}</label></s>
+          <s><label><input type="checkbox" value="true" checked>{{element.value.body}}</label></s>
         </div>
       </div>
-
     </div>
-
   </form>
-
 </div>
 
 <button (click)="LogOut()">Log Out</button>

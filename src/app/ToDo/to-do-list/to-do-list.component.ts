@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { FormControl, AbstractControl, FormBuilder, FormGroup, FormArray } from '@angular/forms';
 
 import { ToDoService } from '../to-do.service';
 
@@ -12,9 +12,7 @@ import { ToDo } from '../to-do.model';
 })
 export class ToDoListComponent implements OnInit {
   formToDo: FormGroup;
-  formToDoArray: FormGroup[];
   formDoneList: FormGroup;
-  formDoneListArray: FormGroup[];
 
   todo1 = new ToDo({ body: 'my body', done: false, userId: '1' });
   todo2 = new ToDo({ body: 'lavar', done: true, userId: '2' });
@@ -27,10 +25,9 @@ export class ToDoListComponent implements OnInit {
 
   ngOnInit() {
     this.toDoList = [this.todo1, this.todo3];
+    console.log(this.todo1.body);
     this.doneList = [this.todo2];
-
     this.formToDo = this.createFormWithBuilderForToDos(this.toDoList);
-    console.log(this.formToDoArray);
     this.formDoneList = this.createFormWithBuilderForDoneList(this.doneList);
   }
 
@@ -54,7 +51,13 @@ export class ToDoListComponent implements OnInit {
     return groupToDos;
   }
 
-  setToDos(toDos: ToDo[]) {
+  get formToDoArray(): FormArray|null {
+    if (!this.formToDo)
+      return null;
+    return (this.formToDo.get('toDos') as FormArray);
+  }
+
+  setToDos(toDos: ToDo[]): FormGroup[] {
     const toDosGroups = toDos.map((toDo: ToDo) => {
       return this.formBuilder.group({
         body: [toDo.body, []],
@@ -75,7 +78,7 @@ export class ToDoListComponent implements OnInit {
     this.formToDo.markAsDirty();
   }
 
-  removeTodo(index: number) {
+  removeTodo(index: number) { // tiene que hacer un add en  DoneList
     const toDosCopy: ToDo[] = Object.assign([], this.formToDo.value.toDoList);
     toDosCopy.splice(index, 1);
 
@@ -94,6 +97,12 @@ export class ToDoListComponent implements OnInit {
       doneArray: this.formBuilder.array(doneGroups)
     });
     return groupDone;
+  }
+
+  get formDoneListArray(): FormArray|null {
+    if (!this.formDoneList)
+      return null;
+    return (this.formDoneList.get('doneArray') as FormArray);
   }
 
   setDoneList(doneList: ToDo[]) {
@@ -117,14 +126,14 @@ export class ToDoListComponent implements OnInit {
     this.formDoneList.markAsDirty();
   }
 
-  removeFromDoneList(index: number) {
+  removeFromDoneList(index: number) {// tiene que hacer un add en  ToDoList
     const doneListCopy: ToDo[] = Object.assign([], this.formDoneList.value.doneList);
     doneListCopy.splice(index, 1);
 
-    const doneListGroups = this.setToDos(doneListCopy);
+    const doneListGroups = this.setDoneList(doneListCopy);
     const doneListFormArray = this.formBuilder.array(doneListGroups);
 
-    this.formDoneList.setControl('toDos', doneListFormArray);
+    this.formDoneList.setControl('doneArray', doneListFormArray);
     this.formDoneList.markAsDirty();
   }
 
