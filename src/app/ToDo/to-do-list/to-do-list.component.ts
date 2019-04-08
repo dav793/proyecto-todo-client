@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, AbstractControl, FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { Observable } from 'rxjs';
+
 
 import { ToDoService } from '../to-do.service';
 
@@ -25,7 +27,6 @@ export class ToDoListComponent implements OnInit {
 
   ngOnInit() {
     this.toDoList = [this.todo1, this.todo3];
-    console.log(this.todo1.body);
     this.doneList = [this.todo2];
     this.formToDo = this.createFormWithBuilderForToDos(this.toDoList);
     this.formDoneList = this.createFormWithBuilderForDoneList(this.doneList);
@@ -66,6 +67,12 @@ export class ToDoListComponent implements OnInit {
       });
     });
     return toDosGroups;
+  }
+
+  onChangesToDos(): void {
+    this.formToDo.get('done').valueChanges.subscribe(val => {
+      this.removeTodo(this.toDoList.indexOf(val));
+    });
   }
 
   addToDos() {
