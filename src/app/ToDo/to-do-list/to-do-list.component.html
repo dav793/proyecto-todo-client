@@ -1,7 +1,7 @@
 <h3> To Do´s List</h3>
 
 <div *ngIf="formToDoArray">
-  <form [formGroup]="formToDo">
+  <form [formGroup]="formToDo" (change)="onChangesToDos($event.target.value)">
     <div>
       <input class="form-control" type="text" placeholder="Search" aria-label="Search">
     </div>
@@ -20,7 +20,7 @@
 <h3> Done´s List</h3>
 
 <div *ngIf="formDoneListArray">
-  <form [formGroup]="formDoneList">
+  <form [formGroup]="formDoneList" (change)="onChangesDoneList($event)">
     <div *ngFor="let element of formDoneListArray.controls; let i = index">
       <div formArrayName="doneArray">
         <div [formGroupName]="i">

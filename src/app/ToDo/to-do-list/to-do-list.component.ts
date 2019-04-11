@@ -53,8 +53,9 @@ export class ToDoListComponent implements OnInit {
   }
 
   get formToDoArray(): FormArray|null {
-    if (!this.formToDo)
+    if (!this.formToDo) {
       return null;
+    }
     return (this.formToDo.get('toDos') as FormArray);
   }
 
@@ -69,14 +70,18 @@ export class ToDoListComponent implements OnInit {
     return toDosGroups;
   }
 
-  onChangesToDos(): void {
-    this.formToDo.get('done').valueChanges.subscribe(val => {
-      this.removeTodo(this.toDoList.indexOf(val));
+  onChangesToDos(e): void {
+    // console.log(this.todo2);
+    // console.log(this.formToDo);
+    this.formToDo.value.get('done').valueChanges.subscribe(val => {
+      const index = this.toDoList.indexOf(val);
+      const todoAux = this.toDoList[index];
+      this.removeTodo(index);
+      this.addToDoneList(todoAux);
     });
   }
 
-  addToDos() {
-    const toDo = new ToDo({});
+  addToDos(toDo: ToDo) {
     this.formToDoArray.push(this.formBuilder.group({
       body: [toDo.body, []],
       done: [toDo.done, []],
@@ -107,8 +112,9 @@ export class ToDoListComponent implements OnInit {
   }
 
   get formDoneListArray(): FormArray|null {
-    if (!this.formDoneList)
+    if (!this.formDoneList) {
       return null;
+    }
     return (this.formDoneList.get('doneArray') as FormArray);
   }
 
@@ -123,8 +129,16 @@ export class ToDoListComponent implements OnInit {
     return toDosGroups;
   }
 
-  addToDoneList() {
-    const element = new ToDo({});
+  onChangesDoneList(e): void {
+    this.formDoneList.get('done').valueChanges.subscribe(val => {
+      const index = this.doneList.indexOf(val);
+      const todoAux = this.toDoList[index];
+      this.removeFromDoneList(index);
+      this.addToDos(todoAux);
+    });
+  }
+
+  addToDoneList(element: ToDo) {
     this.formDoneListArray.push(this.formBuilder.group({
       body: [element.body, []],
       done: [element.done, []],
