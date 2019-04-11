@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, AbstractControl, FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import {FormControl, AbstractControl, FormBuilder, FormGroup, FormArray, Form} from '@angular/forms';
 import { Observable } from 'rxjs';
 
 
@@ -22,6 +22,8 @@ export class ToDoListComponent implements OnInit {
 
   toDoList = [];
   doneList = [];
+
+  todoWatcherSubs = [];
 
   constructor(private formBuilder: FormBuilder, private todoService: ToDoService) { }
 
@@ -49,6 +51,7 @@ export class ToDoListComponent implements OnInit {
     const groupToDos = this.formBuilder.group({
       toDos: this.formBuilder.array(toDosGroups)
     });
+    this.setupToDosWatchers(groupToDos.get('toDos') as FormArray);
     return groupToDos;
   }
 
@@ -70,6 +73,23 @@ export class ToDoListComponent implements OnInit {
     return toDosGroups;
   }
 
+  setupToDosWatchers(formArray: FormArray|null) {
+    if (!formArray)
+      return;
+
+    this.todoWatcherSubs.forEach(sub => sub.unsubscribe());   // limpiar watchers existentes
+
+    formArray.controls.forEach((group) => {
+      const sub = group.get('done').valueChanges.subscribe(val => {
+
+        console.log('TODO: pasar todo al otro form');
+
+      });
+
+      this.todoWatcherSubs.push(sub);
+    });
+  }
+
   onChangesToDos(e): void {
     // console.log(this.todo2);
     // console.log(this.formToDo);
@@ -88,6 +108,7 @@ export class ToDoListComponent implements OnInit {
       userId: [toDo.userId, []]
     }));
     this.formToDo.markAsDirty();
+    this.setupToDosWatchers(this.formToDoArray);
   }
 
   removeTodo(index: number) { // tiene que hacer un add en  DoneList
