@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {FormControl, AbstractControl, FormBuilder, FormGroup, FormArray, Form} from '@angular/forms';
+import { FormControl, AbstractControl, FormBuilder, FormGroup, FormArray, Form } from '@angular/forms';
 import { Observable } from 'rxjs';
 
 
@@ -24,7 +24,7 @@ export class ToDoListComponent implements OnInit {
   doneList = [];
 
   todoWatcherSubs = [];
-
+  doneListWatcherSubs = [];
   constructor(private formBuilder: FormBuilder, private todoService: ToDoService) { }
 
   ngOnInit() {
@@ -55,7 +55,7 @@ export class ToDoListComponent implements OnInit {
     return groupToDos;
   }
 
-  get formToDoArray(): FormArray|null {
+  get formToDoArray(): FormArray | null {
     if (!this.formToDo) {
       return null;
     }
@@ -73,31 +73,19 @@ export class ToDoListComponent implements OnInit {
     return toDosGroups;
   }
 
-  setupToDosWatchers(formArray: FormArray|null) {
+  setupToDosWatchers(formArray: FormArray | null) {
     if (!formArray)
       return;
-
     this.todoWatcherSubs.forEach(sub => sub.unsubscribe());   // limpiar watchers existentes
-
     formArray.controls.forEach((group) => {
       const sub = group.get('done').valueChanges.subscribe(val => {
-
-        console.log('TODO: pasar todo al otro form');
-
+        console.log('val');
+        // const index = this.toDoList.indexOf(val);
+        // const todoAux = this.toDoList[index];
+        // this.removeTodo(index);
+        // this.addToDoneList(todoAux);
       });
-
       this.todoWatcherSubs.push(sub);
-    });
-  }
-
-  onChangesToDos(e): void {
-    // console.log(this.todo2);
-    // console.log(this.formToDo);
-    this.formToDo.value.get('done').valueChanges.subscribe(val => {
-      const index = this.toDoList.indexOf(val);
-      const todoAux = this.toDoList[index];
-      this.removeTodo(index);
-      this.addToDoneList(todoAux);
     });
   }
 
@@ -129,10 +117,11 @@ export class ToDoListComponent implements OnInit {
     const groupDone = this.formBuilder.group({
       doneArray: this.formBuilder.array(doneGroups)
     });
+    this.setupDoneListWatchers(groupDone.get('toDos') as FormArray);
     return groupDone;
   }
 
-  get formDoneListArray(): FormArray|null {
+  get formDoneListArray(): FormArray | null {
     if (!this.formDoneList) {
       return null;
     }
@@ -156,6 +145,22 @@ export class ToDoListComponent implements OnInit {
       const todoAux = this.toDoList[index];
       this.removeFromDoneList(index);
       this.addToDos(todoAux);
+    });
+  }
+
+  setupDoneListWatchers(formArray: FormArray | null) {
+    if (!formArray)
+      return;
+    this.doneListWatcherSubs.forEach(sub => sub.unsubscribe());   // limpiar watchers existentes
+    formArray.controls.forEach((group) => {
+      const sub = group.get('done').valueChanges.subscribe(val => {
+        console.log('val');
+        // const index = this.doneList.indexOf(val);
+        // const todoAux = this.doneList[index];
+        // this.removeFromDoneList(index);
+        // this.addToDos(todoAux);
+      });
+      this.todoWatcherSubs.push(sub);
     });
   }
 
