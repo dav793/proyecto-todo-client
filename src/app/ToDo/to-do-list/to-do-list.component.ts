@@ -79,17 +79,30 @@ export class ToDoListComponent implements OnInit {
     this.todoWatcherSubs.forEach(sub => sub.unsubscribe());   // limpiar watchers existentes
     formArray.controls.forEach((group) => {
       const sub = group.get('done').valueChanges.subscribe(val => {
-        console.log('val');
-        // const index = this.toDoList.indexOf(val);
-        // const todoAux = this.toDoList[index];
-        // this.removeTodo(index);
-        // this.addToDoneList(todoAux);
+        let equals = false;
+        let index = 0;
+        const todoAux = group.value;
+        while (!equals && index < this.toDoList.length) {
+          if (this.toDoList[index].compareToDos(todoAux)) {
+            equals = true;
+          } else {
+            index++;
+          }
+        }
+        this.addToDoneList(this.toDoList[index]);
+        this.toDoList.splice(index, 1);
+        console.log(this.toDoList);
+        console.log(this.doneList);
+        this.removeTodo(index);
+
       });
       this.todoWatcherSubs.push(sub);
     });
   }
 
   addToDos(toDo: ToDo) {
+    toDo.done = false;
+    this.toDoList.push(toDo);
     this.formToDoArray.push(this.formBuilder.group({
       body: [toDo.body, []],
       done: [toDo.done, []],
@@ -99,14 +112,15 @@ export class ToDoListComponent implements OnInit {
     this.setupToDosWatchers(this.formToDoArray);
   }
 
-  removeTodo(index: number) { // tiene que hacer un add en  DoneList
-    const toDosCopy: ToDo[] = Object.assign([], this.formToDo.value.toDoList);
+  removeTodo(index: number) {
+    const toDosCopy: ToDo[] = Object.assign([], this.formToDo.value);
     toDosCopy.splice(index, 1);
+    // console.log(toDosCopy);/////////////////////////////////////////////////
 
     const toDosGroups = this.setToDos(toDosCopy);
     const toDosFormArray = this.formBuilder.array(toDosGroups);
 
-    this.formToDo.setControl('toDos', toDosFormArray);
+    this.formToDo.setControl('done', toDosFormArray);
     this.formToDo.markAsDirty();
   }
 
@@ -117,7 +131,7 @@ export class ToDoListComponent implements OnInit {
     const groupDone = this.formBuilder.group({
       doneArray: this.formBuilder.array(doneGroups)
     });
-    this.setupDoneListWatchers(groupDone.get('toDos') as FormArray);
+    this.setupDoneListWatchers(groupDone.get('doneArray') as FormArray);
     return groupDone;
   }
 
@@ -139,32 +153,33 @@ export class ToDoListComponent implements OnInit {
     return toDosGroups;
   }
 
-  onChangesDoneList(e): void {
-    this.formDoneList.get('done').valueChanges.subscribe(val => {
-      const index = this.doneList.indexOf(val);
-      const todoAux = this.toDoList[index];
-      this.removeFromDoneList(index);
-      this.addToDos(todoAux);
-    });
-  }
-
   setupDoneListWatchers(formArray: FormArray | null) {
     if (!formArray)
       return;
     this.doneListWatcherSubs.forEach(sub => sub.unsubscribe());   // limpiar watchers existentes
     formArray.controls.forEach((group) => {
       const sub = group.get('done').valueChanges.subscribe(val => {
-        console.log('val');
-        // const index = this.doneList.indexOf(val);
-        // const todoAux = this.doneList[index];
-        // this.removeFromDoneList(index);
-        // this.addToDos(todoAux);
+        let equals = false;
+        let index = 0;
+        console.log(group);
+        const todoAux = group.value;
+        while (!equals && index < this.doneList.length) {
+          if (this.doneList[index].compareToDos(todoAux)) {
+            equals = true;
+          } else {
+            index++;
+          }
+        }
+        this.addToDos(this.doneList[index]);
+        this.removeFromDoneList(index);
       });
-      this.todoWatcherSubs.push(sub);
+      this.doneListWatcherSubs.push(sub);
     });
   }
 
   addToDoneList(element: ToDo) {
+    element.done = true;
+    this.doneList.push(element);
     this.formDoneListArray.push(this.formBuilder.group({
       body: [element.body, []],
       done: [element.done, []],
@@ -173,14 +188,14 @@ export class ToDoListComponent implements OnInit {
     this.formDoneList.markAsDirty();
   }
 
-  removeFromDoneList(index: number) {// tiene que hacer un add en  ToDoList
-    const doneListCopy: ToDo[] = Object.assign([], this.formDoneList.value.doneList);
+  removeFromDoneList(index: number) {
+    const doneListCopy: ToDo[] = Object.assign([], this.formDoneList.value);
     doneListCopy.splice(index, 1);
 
     const doneListGroups = this.setDoneList(doneListCopy);
     const doneListFormArray = this.formBuilder.array(doneListGroups);
 
-    this.formDoneList.setControl('doneArray', doneListFormArray);
+    this.formDoneList.setControl('done', doneListFormArray);
     this.formDoneList.markAsDirty();
   }
 
